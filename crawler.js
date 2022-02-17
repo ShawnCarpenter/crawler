@@ -1,18 +1,20 @@
 import fetch from 'node-fetch'
 import { JSDOM } from 'jsdom'
+import { URL } from 'url'
 
-const address = process.argv[2]
+const address = new URL(process.argv[2])
 const depth = process.argv[3]
 const assets = process.argv[4]=== '-a'
-const visited = new Set(address)
+const visited = new Set(address.href)
 const usage = `Usage: node crawler <url> <depth> < -a Optional, downloads assets as well as pages>`
-const getUrl = link => {
-  return link.startsWith('http') ? link : address + link
+
+const getUrl = (link, url) => {
+  return link.startsWith('http') ? link : new URL(link, url)
 }
 
-const getContents = async (addr) => {
+const getContents = async (url) => {
   try {
-    const response = await fetch(addr)
+    const response = await fetch(url)
     const html = await response.text()
     return html
   } catch (error) {
@@ -22,23 +24,20 @@ const getContents = async (addr) => {
 
 const getLinks = (page, url) => {
   const linkArray = []
-  const dom = new JSDOM(page, {
-    url: url,
-    resources: "usable",
-    pretendToBeVisual: true})
+  const dom = new JSDOM(page)
   
   if(assets) {
     const scripts = Array.from(dom.window.document.scripts).filter(script=>script.src)
-    scripts.forEach(script => linkArray.push(getUrl(script.src)))
-   
+    scripts.forEach(script => linkArray.push(getUrl(script.src, url)))
+
     const styleSheets = dom.window.document.querySelectorAll('link')
     styleSheets.forEach(sheet=>{
-      linkArray.push(getUrl(sheet.href))})
+      linkArray.push(getUrl(sheet.href, url))})
   }
   
   const links = dom.window.document.querySelectorAll('a')
   links.forEach(link=>{
-    linkArray.push(getUrl(link.href))
+    linkArray.push(getUrl(link.href, url))
   })
   return linkArray
 }
@@ -48,8 +47,8 @@ const crawl = async (url, depth) => {
   depth--
   const page = await getContents(url)
   console.log(`url: ${url}
-  resource: ${page}
-  size: ${page.length}
+    resource: ${page}
+    size: ${page.length}
   `)
   const links = getLinks(page, url)
   links.forEach(link => {
