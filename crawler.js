@@ -25,14 +25,14 @@ const getLinks = (page, url) => {
   const dom = new JSDOM(page, {
     url: url,
     resources: "usable",
-  pretendToBeVisual: true})
+    pretendToBeVisual: true})
+  
   if(assets) {
     const scripts = Array.from(dom.window.document.scripts).filter(script=>script.src)
     scripts.forEach(script => linkArray.push(getUrl(script.src)))
-    const test = dom.window.document.styleSheets
-    const styleSheets = Array.from(dom.window.document.styleSheets).filter(sheet=>sheet.href)
+   
+    const styleSheets = dom.window.document.querySelectorAll('link')
     styleSheets.forEach(sheet=>{
-      console.log(sheet.href)
       linkArray.push(getUrl(sheet.href))})
   }
   
@@ -48,7 +48,8 @@ const crawl = async (url, depth) => {
   depth--
   const page = await getContents(url)
   console.log(`url: ${url}
-  
+  resource: ${page}
+  size: ${page.length}
   `)
   const links = getLinks(page, url)
   links.forEach(link => {
