@@ -22,7 +22,7 @@ const getContents = async (url) => {
   }
 }
 
-const getLinks = (page, url) => {
+const getLinks = async (page, url) => {
   const linkArray = []
   const dom = new JSDOM(page)
   
@@ -47,10 +47,10 @@ const crawl = async (url, depth) => {
   depth--
   const page = await getContents(url)
   console.log(`url: ${url}
-    resource: ${page}
-    size: ${page.length}
+    resource: ${page || "No data"}
+    size: ${page?.length || "No data"}
   `)
-  const links = getLinks(page, url)
+  const links = await getLinks(page, url)
   links.forEach(link => {
     if(!visited.has(link) && depth > 0) crawl(link, depth)
   }) 
