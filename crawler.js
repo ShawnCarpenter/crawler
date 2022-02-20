@@ -54,7 +54,6 @@ const crawl = async (targetUrl, level) => {
   visited.add(targetUrl)
   level--
   const page = await getContents(targetUrl)
-  console.log(targetUrl)
   console.log(`targetUrl: ${targetUrl}
     resource: 
 ${page || "No data"}
