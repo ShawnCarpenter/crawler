@@ -3,11 +3,11 @@
   "main": "crawler.js",
   "type": "module",
   "dependencies": {
+    "css-url-parser": "^1.1.3",
     "jsdom": "^19.0.0",
     "node-fetch": "^3.2.0"
   },
   "version": "1.0.0",
-  "devDependencies": {},
   "scripts": {
     "test": "echo \"Error: no test specified\" && exit 1"
   },
