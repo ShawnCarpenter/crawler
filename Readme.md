@@ -13,8 +13,8 @@ npm i
 node crawler url number_of_levels [-a]
 ```
 
-I am using the node-fetch package to fetch the data
-I am using the jsdom package to parse the returned data for links.
+I am using the following packages:
 
-jsdom is not working as I expected for the css files.
-I am still trying to figure out that part.
+- node-fetch to fetch the data
+- jsdom package to parse the returned data for links
+- css-url-parser to get the @import links from the .css files
